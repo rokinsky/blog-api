@@ -20,8 +20,6 @@ export class RolesGuard implements CanActivate {
       [context.getHandler(), context.getClass()],
     );
 
-    console.log({ requiredRoles });
-
     if (!requiredRoles) {
       return true;
     }
@@ -38,12 +36,10 @@ export class RolesGuard implements CanActivate {
     try {
       const user = await this.jwtService.verifyAsync(token);
       req.user = user;
-      console.log({ user });
       return user.roles.some((role: Role) =>
         requiredRoles.includes(role.value),
       );
     } catch (e) {
-      console.log(e);
       throw new ForbiddenException('Invalid access');
     }
   }
