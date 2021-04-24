@@ -10,25 +10,25 @@ enum Environment {
 
 class EnvironmentVariables {
   @IsEnum(Environment)
-  NODE_ENV!: Environment;
+  NODE_ENV: Environment;
 
   @IsNumber()
-  PORT!: number;
+  PORT: number;
 
   @IsString()
-  POSTGRES_HOST!: string;
+  POSTGRES_HOST: string;
 
   @IsString()
-  POSTGRES_USER!: string;
+  POSTGRES_USER: string;
 
   @IsString()
-  POSTGRES_DB!: string;
+  POSTGRES_DB: string;
 
   @IsString()
-  POSTGRES_PASSWORD!: string;
+  POSTGRES_PASSWORD: string;
 
   @IsNumber()
-  POSTGRES_PORT!: number;
+  POSTGRES_PORT: number;
 }
 
 export function validate(config: Record<string, unknown>) {
