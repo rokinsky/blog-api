@@ -29,6 +29,9 @@ class EnvironmentVariables {
 
   @IsNumber()
   POSTGRES_PORT: number;
+
+  @IsString()
+  PRIVATE_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {
