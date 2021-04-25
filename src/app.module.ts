@@ -4,7 +4,7 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { databaseConfig } from './config/database.config';
 import { validate } from './config/env.validation';
-import { globalConfig } from './config/global.config';
+import { serverConfig } from './config/server.config';
 import { User } from './users/users.model';
 import { RolesModule } from './roles/roles.module';
 import { Role } from './roles/roles.model';
@@ -16,13 +16,19 @@ import { PostsModule } from './posts/posts.module';
 import { FilesModule } from './files/files.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
+import { jwtConfig } from './config/jwt.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       validate,
-      envFilePath: `.${process.env.NODE_ENV}.env`,
-      load: [globalConfig, databaseConfig],
+      envFilePath: [
+        '.env.local',
+        '.env',
+        `.env.${process.env.NODE_ENV}.local`,
+        `.env.${process.env.NODE_ENV}`,
+      ],
+      load: [serverConfig, databaseConfig, jwtConfig],
     }),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, 'static'),

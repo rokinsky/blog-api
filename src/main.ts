@@ -7,10 +7,11 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('global.port', 5000);
+  const port = configService.get<number>('server.port', 5000);
+  const origin = configService.get<string>('server.origin');
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Hello')
+    .setTitle('Blog API')
     .setDescription('Blog REST API documentation')
     .setVersion('1.0.0')
     .addTag('rokinsky')
@@ -20,6 +21,7 @@ async function bootstrap() {
   SwaggerModule.setup('/api/docs', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
+  app.enableCors({ origin });
 
   await app.listen(port, () =>
     console.log(`Application is running on port ${port}`),

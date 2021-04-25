@@ -6,6 +6,11 @@
 $ npm install
 ```
 
+## Environment variables
+
+All secrets should be stored in `.env*.local` and these files are intended to be ignored.
+There are 5 environments: `∅` (default), `production`, `development`, `staging` and `test`.
+
 ## Running the app
 
 ```bash

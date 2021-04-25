@@ -1,5 +1,12 @@
 import { plainToClass } from 'class-transformer';
-import { IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsString,
+  IsUrl,
+  validateSync,
+} from 'class-validator';
+import { HttpStatus, ValidationPipe } from '@nestjs/common';
 
 enum Environment {
   Development = 'development',
@@ -13,7 +20,10 @@ class EnvironmentVariables {
   NODE_ENV: Environment;
 
   @IsNumber()
-  PORT: number;
+  SERVER_PORT: number;
+
+  @IsUrl()
+  SERVER_ORIGIN: string;
 
   @IsString()
   POSTGRES_HOST: string;
@@ -31,7 +41,7 @@ class EnvironmentVariables {
   POSTGRES_PORT: number;
 
   @IsString()
-  PRIVATE_KEY: string;
+  JWT_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {
@@ -43,7 +53,11 @@ export function validate(config: Record<string, unknown>) {
   });
 
   if (errors.length > 0) {
-    throw new Error(errors.toString());
+    const exceptionFactory = new ValidationPipe({
+      errorHttpStatusCode: HttpStatus.PRECONDITION_FAILED,
+    }).createExceptionFactory();
+    throw exceptionFactory(errors);
   }
+
   return validatedConfig;
 }
