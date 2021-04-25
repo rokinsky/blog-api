@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -9,6 +8,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { User } from '../users/users.model';
+import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -17,8 +17,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(userDto: CreateUserDto) {
-    const user = await this.validateUser(userDto);
+  async login(user?: User) {
+    if (!user) {
+      throw new UnauthorizedException();
+    }
 
     return this.generateToken(user);
   }
@@ -36,15 +38,16 @@ export class AuthService {
 
   generateToken(user: User) {
     const { id, email, roles } = user;
+    const payload: JwtPayload = { id, email, roles };
     return {
-      token: this.jwtService.sign({ id, email, roles }),
+      token: this.jwtService.sign(payload),
     };
   }
 
-  private async validateUser(userDto: CreateUserDto) {
+  async validateUser(userDto: CreateUserDto): Promise<User> {
     const user = await this.userService.getUserByEmail(userDto.email);
 
-    if (!user || !(await bcrypt.compare(userDto.password, user.password))) {
+    if (!user || !(await user.validatePassword(userDto.password))) {
       throw new UnauthorizedException('Incorrect email or password');
     }
 

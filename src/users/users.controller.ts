@@ -4,9 +4,10 @@ import { UsersService } from './users.service';
 import { User } from './users.model';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../auth/roles-auth.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -23,7 +24,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Users retrieving' })
   @ApiResponse({ status: 200, type: [User] })
   @Roles('ADMIN')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   getAll(): Promise<User[]> {
     return this.userService.getAllUsers();
@@ -32,7 +33,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Give a role' })
   @ApiResponse({ status: 200 })
   @Roles('ADMIN')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('/role')
   addRole(@Body() dto: AddRoleDto): Promise<void> {
     return this.userService.addRole(dto);
@@ -41,7 +42,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Ban a user' })
   @ApiResponse({ status: 200 })
   @Roles('ADMIN')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('/ban')
   banUser(@Body() dto: BanUserDto): Promise<User> {
     return this.userService.ban(dto);

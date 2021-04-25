@@ -21,11 +21,6 @@ export class UsersService {
       await user.$set('roles', [role.id]);
 
       user.roles = [role];
-
-      console.log({
-        role,
-        user,
-      });
     }
 
     return user;
