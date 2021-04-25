@@ -3,12 +3,17 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { EnvironmentVariables } from './config/env.model';
+import { ServerConfig } from './config/server.config';
+import * as assert from 'assert';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('server.port', 5000);
-  const origin = configService.get<string>('server.origin');
+  const serverConfig = app
+    .get<ConfigService<EnvironmentVariables>>(ConfigService)
+    .get<ServerConfig>('server');
+  assert(!!serverConfig);
+  const { port, origin } = serverConfig;
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Blog API')
