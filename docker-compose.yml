@@ -13,13 +13,13 @@ services:
       - 9229:9229
     command: bash -c 'yarn && yarn start:dev'
     links:
-      - postgres
+      - db
     depends_on:
-      - postgres
+      - db
     restart: always
 
-  postgres:
-    container_name: postgres
+  db:
+    container_name: db
     image: postgres:12
     env_file:
       - .env.development.local
@@ -30,6 +30,13 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
 
 volumes:
   pgdata:
