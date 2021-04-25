@@ -17,11 +17,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(user?: User) {
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-
+  async login(user: User) {
     return this.generateToken(user);
   }
 
